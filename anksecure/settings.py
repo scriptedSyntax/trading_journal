@@ -8,7 +8,7 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() == "true"
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 # --- CSRF Trusted Origins ---
-CSRF_TRUSTED_ORIGINS = ["https://madpips.up.railway.app"]
+CSRF_TRUSTED_ORIGINS = [madpips.up.railway.app"]
 
 # --- APPLICATIONS ---
 INSTALLED_APPS = [
@@ -126,6 +126,7 @@ SECURE_HSTS_SECONDS = 31536000
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
+
 
 
 
