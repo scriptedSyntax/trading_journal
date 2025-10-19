@@ -9,11 +9,13 @@ from django.utils.deprecation import MiddlewareMixin
 
 logger = logging.getLogger("security")
 
+
 def _client_ip(request):
     xff = request.META.get("HTTP_X_FORWARDED_FOR")
     if xff:
         return xff.split(",")[0].strip()
     return request.META.get("REMOTE_ADDR", "")
+
 
 # -------------------------------
 # Existing Security Middleware(s)
@@ -21,7 +23,8 @@ def _client_ip(request):
 
 class SecurityIPAllowlistMiddleware(MiddlewareMixin):
     """
-    Optional example: allowlist by CIDR ranges via settings.SECURITY_IP_ALLOWLIST = ["127.0.0.1/32", ...]
+    Optional example: allowlist by CIDR ranges via
+    settings.SECURITY_IP_ALLOWLIST = ["127.0.0.1/32", ...]
     If not configured, it does nothing.
     """
     def process_request(self, request):
@@ -38,6 +41,7 @@ class SecurityIPAllowlistMiddleware(MiddlewareMixin):
         if not ok:
             logger.info("Blocked IP: %s", client)
             return redirect("/accounts/login/")
+
 
 class SecurityIdleTimeoutMiddleware(MiddlewareMixin):
     """
@@ -62,6 +66,7 @@ class SecurityIdleTimeoutMiddleware(MiddlewareMixin):
             return redirect("/accounts/login/?timeout=1")
         request.session[self.LAST_SEEN_KEY] = now
 
+
 # -------------------------------
 # NEW: Tenant Binding Middleware
 # -------------------------------
@@ -70,12 +75,8 @@ class TenantBindingMiddleware(MiddlewareMixin):
     """
     Binds the active tenant to each authenticated request as `request.tenant`.
 
-    Resolution strategy (simple, safe, no new files):
     - If user is authenticated and has a profile with a tenant -> use it.
-    - If no profile/tenant exists -> set `request.tenant = None` (views/admin should guard).
-      (You can add a redirect or hard 403 later once all users are assigned.)
-
-    This middleware does not alter routing. It only sets request.tenant for use in views/admin.
+    - If no profile/tenant exists -> set `request.tenant = None`.
     """
 
     def process_request(self, request):
@@ -84,7 +85,6 @@ class TenantBindingMiddleware(MiddlewareMixin):
         if not user or not user.is_authenticated:
             return
 
-        # Lazy import to avoid circulars if this module is loaded early
         try:
             from core.models import UserProfile  # noqa
         except Exception:
@@ -97,16 +97,17 @@ class TenantBindingMiddleware(MiddlewareMixin):
 
 
 # -------------------------------
-# NEW: Anti-crawler Header Middleware
+# Anti-Crawler Header Middleware
 # -------------------------------
-from django.utils.deprecation import MiddlewareMixin
 
 class AntiCrawlerHeaderMiddleware(MiddlewareMixin):
     """
-    Adds X-Robots-Tag headers to every response to prevent indexing/crawling.
+    Adds headers to prevent indexing/crawling and control browser security.
+    Updated to keep Referrer header for same-origin requests (fixes CSRF).
     """
     def process_response(self, request, response):
         response["X-Robots-Tag"] = "noindex, nofollow, nosnippet, noarchive"
-        response["Referrer-Policy"] = "no-referrer"
+        # Allow Referer for same-origin requests (needed for CSRF validation)
+        response["Referrer-Policy"] = "same-origin"
         response["Permissions-Policy"] = "geolocation=(), microphone=(), camera=()"
         return response
