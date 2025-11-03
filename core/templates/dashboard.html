@@ -1,15 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full dark">
+<html lang="en" class="h-full">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Professional Trading Dashboard (USD)</title>
+  <title>Trading Dashboard (USD)</title>
 
-  <!-- Tailwind (dark locked) -->
-  <script>
-    window.tailwind = window.tailwind || {};
-    window.tailwind.config = { darkMode: 'class' };
-  </script>
+  <!-- Tailwind (light mode only) -->
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- Inter + Chart.js -->
@@ -17,247 +13,244 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    :root{
-      --primary-color:#3b82f6;   /* blue-500 */
-      --positive-color:#10b981;  /* emerald-500 */
-      --negative-color:#ef4444;  /* red-500 */
+    :root {
+      --primary-color: #2563eb; /* blue-600 */
+      --positive-color: #16a34a; /* green-600 */
+      --negative-color: #dc2626; /* red-600 */
+      --bg-panel: #ffffff;
+      --bg-soft: #f9fafb;
+      --border: #e5e7eb;
+      --text-muted: #6b7280;
     }
-    html,body{height:100%}
-    body{font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,'Noto Sans',Arial;background:#0b0f19;color:#e5e7eb}
-    .card{background:#0f172a;border:1px solid #1f2937}
-    .soft{background:#0d1323}
-    .calendar-day{
-      display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;
-      height:80px;padding:8px;border-radius:.75rem;background:#0b1222;border:1px solid #1f2937;transition:background-color .15s;
+    html, body { height: 100%; }
+    body {
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Noto Sans', Arial;
+      background: #f4f6f8;
+      color: #1f2937;
     }
-    .calendar-day:not(.day-empty):hover{background:#0f1830}
-    .day-empty{background:transparent!important;border:none!important}
-    .qmark{
-      display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;
-      border-radius:9999px;border:1px solid currentColor;font-size:10px;line-height:1;opacity:.7;margin-left:6px;cursor:help
+    .card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
     }
-    .token{display:inline-flex;gap:6px;align-items:center;padding:.25rem .5rem;border-radius:.5rem;border:1px solid #293242;background:#0c1426}
-    .muted{color:#9aa3b2}
+    .soft {
+      background: var(--bg-soft);
+    }
+    .muted {
+      color: var(--text-muted);
+    }
+    .token {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.5rem;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+    }
+    .calendar-day {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: space-between;
+      height: 80px;
+      padding: 8px;
+      border-radius: 0.75rem;
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+      transition: background-color 0.15s;
+    }
+    .calendar-day:hover {
+      background: #f1f5f9;
+    }
+    .day-empty {
+      background: transparent !important;
+      border: none !important;
+    }
   </style>
 </head>
 <body class="h-full">
-  <!-- Message Box -->
   <div id="messageBoxContainer"></div>
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-    <!-- Header -->
-    <header class="mb-6 sm:mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-800 pb-4 gap-3">
-      <h1 class="text-2xl sm:text-3xl font-extrabold flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 sm:h-8 sm:w-8 text-blue-400 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-        Professional Trading Journal
-      </h1>
-      <div class="mt-2 sm:mt-0 flex items-center gap-2">
-        <p class="text-[11px] sm:text-xs muted">User ID: {{ user_external_id }}</p>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
 
-        <a href="{% url 'settings' %}" class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg text-sm font-semibold shadow">
-          Settings
-        </a>
+  <!-- Header -->
+  <header class="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-gray-200 pb-4 gap-3">
+    <h1 class="text-2xl sm:text-3xl font-extrabold flex items-center">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 sm:h-8 sm:w-8 text-blue-600 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+      </svg>
+      Trading Journal
+    </h1>
+    <div class="mt-2 sm:mt-0 flex items-center gap-2">
+      <p class="text-xs sm:text-sm muted">User ID: {{ user_external_id }}</p>
+      <a href="{% url 'settings' %}" class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-sm font-semibold shadow">
+        Settings
+      </a>
+      <form method="post" action="{% url 'logout' %}" class="inline m-0 p-0">
+        {% csrf_token %}
+        <button class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg text-sm font-semibold shadow">
+          Logout
+        </button>
+      </form>
+    </div>
+  </header>
 
-        <form method="post" action="{% url 'logout' %}" class="inline m-0 p-0">
-          {% csrf_token %}
-          <button class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg text-sm font-semibold shadow">
-            Logout
+  <!-- 1. System Edge -->
+  <section class="soft p-6 sm:p-8 rounded-2xl shadow mb-8 text-center border border-gray-200">
+    <h2 class="text-sm sm:text-base font-semibold tracking-wider text-blue-700 uppercase mb-2">System Edge</h2>
+    <p class="text-6xl sm:text-7xl font-extrabold mb-3 text-gray-800" id="expectancyPercent">{{ expectancy_r|default:"0.00" }} R</p>
+    <p class="text-sm sm:text-md font-semibold text-gray-600 mb-4">
+      Balance: <span id="accountBalance">USD {{ balance|floatformat:2 }}</span>
+    </p>
+    <div class="bg-blue-50 px-4 py-2 rounded-lg text-xs sm:text-sm max-w-lg mx-auto border border-blue-100 text-blue-700">
+      Formula: (Win % × Avg Win) − (Loss % × Avg Loss)
+    </div>
+  </section>
+
+  <!-- 2. Key Metrics -->
+  <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6 mb-8">
+    <div class="card p-5 rounded-xl shadow text-center">
+      <p class="text-xs sm:text-sm muted">Total Profit / Loss</p>
+      <p class="text-2xl font-extrabold mt-1" id="netPL" style="color: var(--positive-color);">+USD {{ net_pl|floatformat:2 }}</p>
+      <span class="text-xs muted">Overall result</span>
+    </div>
+    <div class="card p-5 rounded-xl shadow text-center">
+      <p class="text-xs sm:text-sm muted">Biggest Drawdown</p>
+      <p class="text-2xl font-extrabold mt-1" id="maxDD" style="color: var(--negative-color);">{{ max_dd|floatformat:2 }}</p>
+      <span class="text-xs muted">From equity curve</span>
+    </div>
+    <div class="card p-5 rounded-xl shadow text-center">
+      <p class="text-xs sm:text-sm muted">Profit Factor</p>
+      <p class="text-2xl font-extrabold mt-1 text-blue-600" id="profitFactor">{{ profit_factor|floatformat:2 }}x</p>
+      <span class="text-xs muted">Gains vs losses</span>
+    </div>
+    <div class="card p-5 rounded-xl shadow text-center">
+      <p class="text-xs sm:text-sm muted">Win Rate</p>
+      <p class="text-2xl font-extrabold mt-1 text-amber-500" id="winRate">{{ win_rate|floatformat:2 }}%</p>
+      <span class="text-xs muted">Winning trades</span>
+    </div>
+    <div class="card p-5 rounded-xl shadow text-center">
+      <p class="text-xs sm:text-sm muted">Average R</p>
+      <p class="text-2xl font-extrabold mt-1 text-indigo-500" id="avgRRR">{{ avg_rrr|floatformat:2 }} R</p>
+      <span class="text-xs muted">Per trade</span>
+    </div>
+  </section>
+
+  <!-- 3. Performance Graph -->
+  <section class="mb-8">
+    <h2 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 flex items-center text-gray-800">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Performance (Total P/L)
+    </h2>
+    <div class="card rounded-xl p-3 shadow">
+      <canvas id="growthChart" height="90"></canvas>
+    </div>
+  </section>
+
+  <!-- 4. Quick Entry + Calendar -->
+  <section class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
+    <!-- Quick Entry -->
+    <div class="lg:col-span-2 card p-6 rounded-xl shadow border-t-4 border-green-600">
+      <h3 class="text-lg font-semibold mb-4">Quick Trade Entry</h3>
+      <form id="tradeEntryForm" class="space-y-3" method="post" action="{% url 'trade_add' %}" data-url-add="{% url 'trade_add' %}">
+        {% csrf_token %}
+        <div>
+          <label for="symbol" class="block text-xs font-medium muted mb-1">Asset / Symbol</label>
+          <input type="text" id="symbol" name="symbol" placeholder="e.g. AAPL, BTCUSD" class="w-full p-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-blue-500 focus:border-blue-500" required>
+        </div>
+        <div>
+          <label for="tradeDate" class="block text-xs font-medium muted mb-1">Date</label>
+          <input type="date" id="tradeDate" name="tradeDate" value="{{ trade_date|default:'' }}" class="w-full p-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-blue-500 focus:border-blue-500" required>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label for="initialRisk" class="block text-xs font-medium muted mb-1">Risk ($)</label>
+            <input type="number" id="initialRisk" name="initialRisk" step="0.01" placeholder="e.g. 100" class="w-full p-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-blue-500 focus:border-blue-500" required>
+          </div>
+          <div>
+            <label for="pnl" class="block text-xs font-medium muted mb-1">P/L ($)</label>
+            <input type="number" id="pnl" name="pnl" step="0.01" placeholder="+250 or -50" class="w-full p-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-blue-500 focus:border-blue-500" required>
+          </div>
+        </div>
+        <div>
+          <label for="strategy" class="block text-xs font-medium muted mb-1">Strategy</label>
+          <select id="strategy" name="strategy" class="w-full p-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-blue-500 focus:border-blue-500">
+            {% if strategy_options %}
+              {% for s in strategy_options %}
+                <option value="{{ s }}">{{ s }}</option>
+              {% endfor %}
+            {% else %}
+              <option disabled selected>No strategies yet — add in Settings</option>
+            {% endif %}
+          </select>
+        </div>
+        <div>
+          <label for="tradeNote" class="block text-xs font-medium muted mb-1">Notes</label>
+          <textarea id="tradeNote" name="tradeNote" rows="3" placeholder="Add thoughts or comments about the trade." class="w-full p-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-blue-500 focus:border-blue-500"></textarea>
+        </div>
+        <button id="addTradeBtn" class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold text-sm shadow">Save Trade</button>
+      </form>
+    </div>
+
+    <!-- Calendar -->
+    <div class="lg:col-span-3 card p-6 rounded-xl shadow">
+      <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
+        <h3 class="text-lg font-semibold text-gray-800">Trade Calendar</h3>
+        <div class="flex items-center gap-2 text-gray-600">
+          <button id="prevMonthBtn" class="p-1 rounded-full hover:bg-gray-100" aria-label="Previous month" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
           </button>
-        </form>
-
-        
-      </div>
-    </header>
-
-    <!-- 1. System Edge (Expected R) -->
-    <section class="soft p-6 sm:p-8 rounded-2xl shadow-2xl mb-6 sm:mb-8 text-white border border-gray-800">
-      <div class="flex flex-col items-center text-center">
-        <h2 class="text-sm sm:text-base font-medium tracking-widest text-blue-200 uppercase mb-3">
-          System Edge (Expected R)
-          <span class="qmark" title="Average profit in R per trade. E = (W% × Avg Rwin) − (L% × Avg Rloss)">?</span>
-        </h2>
-        <p class="text-6xl sm:text-7xl font-extrabold mb-2"><span id="expectancyPercent">{{ expectancy_r|default:"0.00" }} R</span></p>
-        <p class="text-sm sm:text-md font-semibold text-blue-200 mb-4">
-          Account Balance:
-          <span id="accountBalance">USD {{ balance|floatformat:2 }}</span>
-        </p>
-        <div class="bg-blue-900/40 px-4 py-2 rounded-lg text-xs sm:text-sm max-w-lg border border-blue-900/50">
-          <p class="text-blue-200 mb-1 font-mono">E = (W Rate · Avg R<sub>win</sub>) − (L Rate · Avg R<sub>loss</sub>)</p>
-          <p class="text-blue-300">Higher is better; > 0 means the system is profitable per trade.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- 2. Key Metrics -->
-    <section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6 mb-8">
-      <div class="card p-4 sm:p-5 rounded-xl shadow">
-        <p class="text-xs sm:text-sm muted">
-          Total Net P/L
-          <span class="qmark" title="Sum of all P/L across all trades.">?</span>
-        </p>
-        <p class="text-2xl font-extrabold mt-1" id="netPL" style="color: var(--positive-color);">+USD {{ net_pl|floatformat:2 }}</p>
-        <span class="text-[11px] sm:text-xs muted">Since inception</span>
-      </div>
-      <div class="card p-4 sm:p-5 rounded-xl shadow">
-        <p class="text-xs sm:text-sm muted">
-          Max Drawdown
-          <span class="qmark" title="Worst peak-to-trough cumulative loss. Closer to 0 is better.">?</span>
-        </p>
-        <p class="text-2xl font-extrabold mt-1" id="maxDD" style="color: var(--negative-color);">{{ max_dd|floatformat:2 }}</p>
-        <span class="text-[11px] sm:text-xs muted">Cumulative equity</span>
-      </div>
-      <div class="card p-4 sm:p-5 rounded-xl shadow">
-        <p class="text-xs sm:text-sm muted">
-          Profit Factor
-          <span class="qmark" title="Gross Profit / Gross Loss. > 1 means profitable.">?</span>
-        </p>
-        <p class="text-2xl font-extrabold mt-1 text-blue-300" id="profitFactor">{{ profit_factor|floatformat:2 }}x</p>
-        <span class="text-[11px] sm:text-xs muted">Efficiency of system</span>
-      </div>
-      <div class="card p-4 sm:p-5 rounded-xl shadow">
-        <p class="text-xs sm:text-sm muted">
-          Win Rate
-          <span class="qmark" title="Winning trades / total trades. Consider together with Avg R / PF.">?</span>
-        </p>
-        <p class="text-2xl font-extrabold mt-1 text-amber-300" id="winRate">{{ win_rate|floatformat:2 }}%</p>
-        <span class="text-[11px] sm:text-xs muted">Share of winners</span>
-      </div>
-      <div class="card p-4 sm:p-5 rounded-xl shadow">
-        <p class="text-xs sm:text-sm muted">
-          Avg R
-          <span class="qmark" title="Average R per trade. Normalizes for position sizing.">?</span>
-        </p>
-        <p class="text-2xl font-extrabold mt-1 text-indigo-300" id="avgRRR">{{ avg_rrr|floatformat:2 }} R</p>
-        <span class="text-[11px] sm:text-xs muted">Per trade</span>
-      </div>
-    </section>
-
-    <!-- 3. Performance Graph -->
-    <section class="mb-8">
-      <h2 class="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        Performance (Cumulative P/L)
-        <span class="qmark" title="Cumulative sum of trade P/L over time.">?</span>
-      </h2>
-      <div class="card rounded-xl p-3 shadow">
-        <canvas id="growthChart" height="90"></canvas>
-      </div>
-    </section>
-
-    <!-- 4 & 5. Quick Entry + Calendar -->
-    <section class="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-8">
-      <!-- Quick Trade Entry -->
-      <div class="lg:col-span-2 card p-4 sm:p-6 rounded-xl shadow border-t-4 border-emerald-600">
-        <h3 class="text-lg font-semibold mb-4 flex items-center">Quick Trade Entry</h3>
-
-        <form id="tradeEntryForm" class="space-y-3" method="post" action="{% url 'trade_add' %}" data-url-add="{% url 'trade_add' %}">
-          {% csrf_token %}
-          <div>
-            <label for="symbol" class="block text-xs font-medium muted mb-1">Asset/Symbol</label>
-            <input type="text" id="symbol" name="symbol" placeholder="e.g. KCB, BTCUSD" class="w-full p-2 border border-gray-700 rounded-lg text-sm bg-[#0b1222] focus:ring-blue-500 focus:border-blue-500" required>
-          </div>
-          <div>
-            <label for="tradeDate" class="block text-xs font-medium muted mb-1">Entry Date</label>
-            <input type="date" id="tradeDate" name="tradeDate" value="{{ trade_date|default:'' }}" class="w-full p-2 border border-gray-700 rounded-lg text-sm bg-[#0b1222] focus:ring-blue-500 focus:border-blue-500" required>
-          </div>
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label for="initialRisk" class="block text-xs font-medium muted mb-1">Initial Risk (USD)</label>
-              <input type="number" id="initialRisk" name="initialRisk" step="0.01" placeholder="e.g. 100" class="w-full p-2 border border-gray-700 rounded-lg text-sm bg-[#0b1222] focus:ring-blue-500 focus:border-blue-500" required>
-            </div>
-            <div>
-              <label for="pnl" class="block text-xs font-medium muted mb-1">P/L (USD)</label>
-              <input type="number" id="pnl" name="pnl" step="0.01" placeholder="+250 or -50" class="w-full p-2 border border-gray-700 rounded-lg text-sm bg-[#0b1222] focus:ring-blue-500 focus:border-blue-500" required>
-            </div>
-          </div>
-          <div>
-            <label for="strategy" class="block text-xs font-medium muted mb-1">Strategy Used</label>
-            <select id="strategy" name="strategy" class="w-full p-2 border border-gray-700 rounded-lg text-sm bg-[#0b1222] focus:ring-blue-500 focus:border-blue-500">
-              {% if strategy_options %}
-                {% for s in strategy_options %}
-                  <option value="{{ s }}">{{ s }}</option>
-                {% endfor %}
-              {% else %}
-                <option disabled selected>No strategies yet — add in Settings</option>
-              {% endif %}
-            </select>
-          </div>
-          <div>
-            <label for="tradeNote" class="block text-xs font-medium muted mb-1">Trade Notes/Comments</label>
-            <textarea id="tradeNote" name="tradeNote" rows="3" placeholder="Market observations, emotional state, setup details." class="w-full p-2 border border-gray-700 rounded-lg text-sm bg-[#0b1222] focus:ring-blue-500 focus:border-blue-500"></textarea>
-          </div>
-          <button id="addTradeBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-semibold text-sm shadow inline-flex items-center justify-center">
-            Save Trade
+          <span class="font-medium self-center" id="calendarTitle">{{ cal_title|default:"" }}</span>
+          <button id="nextMonthBtn" class="p-1 rounded-full hover:bg-gray-100" aria-label="Next month" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
           </button>
-        </form>
-      </div>
-
-      <!-- Calendar -->
-      <div class="lg:col-span-3 card p-4 sm:p-6 rounded-xl shadow">
-        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
-          <h3 class="text-lg font-semibold flex items-center">Trading Activity Calendar</h3>
-          <div class="flex items-center gap-2 muted">
-            <button id="prevMonthBtn" class="p-1 rounded-full hover:bg-[#0f1830]" aria-label="Previous month" type="button">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
-            </button>
-            <span class="font-medium self-center" id="calendarTitle">{{ cal_title|default:"" }}</span>
-            <button id="nextMonthBtn" class="p-1 rounded-full hover:bg-[#0f1830]" aria-label="Next month" type="button">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-            </button>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-7 text-center text-[11px] sm:text-xs font-medium muted mb-2">
-          <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
-        </div>
-
-        <!-- Calendar tiles (rendered by JS) -->
-        <div id="calendarGrid" class="grid grid-cols-7 gap-1 text-xs sm:text-sm"></div>
-        <p class="text-[11px] sm:text-xs muted mt-4 text-center">
-          Calendar shows each day’s total and trades. <span class="text-emerald-400">Green</span> = net profit,
-          <span class="text-red-400">Red</span> = net loss, Gray = no trades.
-        </p>
-      </div>
-    </section>
-
-    <!-- Strategy Edge + Streaks -->
-    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <!-- Strategy Edge Overview -->
-      <div class="card p-5 rounded-xl shadow">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-semibold">Strategy Edge Overview</h3>
-        </div>
-
-        <div id="strategyEdgeContainer">
-          <div class="text-sm muted">Loading…</div>
         </div>
       </div>
+      <div class="grid grid-cols-7 text-center text-xs font-medium muted mb-2">
+        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+      </div>
+      <div id="calendarGrid" class="grid grid-cols-7 gap-1 text-xs"></div>
+      <p class="text-xs muted mt-4 text-center">
+        <span class="text-green-600">Green</span> = profit day, <span class="text-red-600">Red</span> = loss day, Gray = no trades.
+      </p>
+    </div>
+  </section>
 
-      <!-- Streak Analysis -->
-      <div class="card p-5 rounded-xl shadow">
-        <h3 class="text-lg font-semibold mb-4">Streak Analysis</h3>
-        <div class="space-y-3">
-          <div class="flex justify-between items-center p-3 rounded-lg" style="background:#062416;border:1px solid #0e3a25">
-            <span class="text-gray-200 font-medium">Longest Winning Streak:</span>
-            <span class="text-xl font-bold text-emerald-400" id="streakWin">0 Trades</span>
-          </div>
-          <div class="flex justify-between items-center p-3 rounded-lg" style="background:#2a0b0b;border:1px solid #5b1a1a">
-            <span class="text-gray-200 font-medium">Longest Losing Streak:</span>
-            <span class="text-xl font-bold text-red-400" id="streakLoss">0 Trades</span>
-          </div>
-          <div class="flex justify-between items-center p-3 rounded-lg" style="background:#0f172a;border:1px solid #1f2937">
-            <span class="text-gray-200 font-medium">Max Consecutive Risk:</span>
-            <span class="text-xl font-bold" id="streakRisk">USD 0</span>
-          </div>
+  <!-- Strategy Edge + Streaks -->
+  <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="card p-5 rounded-xl shadow">
+      <h3 class="text-lg font-semibold mb-4">Strategy Summary</h3>
+      <div id="strategyEdgeContainer">
+        <div class="text-sm muted">Loading...</div>
+      </div>
+    </div>
+
+    <div class="card p-5 rounded-xl shadow">
+      <h3 class="text-lg font-semibold mb-4">Streaks</h3>
+      <div class="space-y-3">
+        <div class="flex justify-between items-center p-3 rounded-lg bg-green-50 border border-green-200">
+          <span class="font-medium text-gray-700">Longest Win Streak:</span>
+          <span class="text-xl font-bold text-green-600" id="streakWin">0 Trades</span>
+        </div>
+        <div class="flex justify-between items-center p-3 rounded-lg bg-red-50 border border-red-200">
+          <span class="font-medium text-gray-700">Longest Loss Streak:</span>
+          <span class="text-xl font-bold text-red-600" id="streakLoss">0 Trades</span>
+        </div>
+        <div class="flex justify-between items-center p-3 rounded-lg bg-gray-50 border border-gray-200">
+          <span class="font-medium text-gray-700">Max Risk in a Row:</span>
+          <span class="text-xl font-bold text-gray-800" id="streakRisk">USD 0</span>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <footer class="mt-10 text-center text-xs muted border-t border-gray-800 py-6">
-      &copy; 2025 Professional Trading Journal — Focus. Execute. Review.
-    </footer>
-  </div>
+  <footer class="mt-10 text-center text-xs muted border-t border-gray-200 py-6">
+    &copy; 2025 Trading Journal — Focus. Trade. Improve.
+  </footer>
+</div>
 
+
+  <!-- Scripts -->
   <!-- AJAX + Rendering -->
   <script>
     // ---------- URLs (server-provided) ----------
@@ -381,19 +374,24 @@
         const trades = rec.trades;
 
         const box = document.createElement('div');
-        const styleClass =
-          trades === 0 ? 'bg-transparent border border-gray-800' :
-          pnl > 0 ? 'border border-emerald-800' :
-          'border border-red-800';
+        let bgClass = '';
+        if (trades === 0) {
+          bgClass = 'bg-gray-100'; // super grey for no trades
+        } else if (pnl > 0) {
+          bgClass = 'bg-emerald-100'; // light green for profit
+        } else if (pnl < 0) {
+          bgClass = 'bg-red-100'; // light red for loss
+        }
 
-        box.className = `calendar-day ${styleClass}`;
+        box.className = `calendar-day ${bgClass} border border-gray-200 shadow-sm`;
+
         box.innerHTML = `
-          <span class="text-[11px] font-medium text-gray-300">Day ${day}</span>
+          <span class="text-[11px] font-medium text-gray-600">Day ${day}</span>
           <div class="flex flex-col gap-0.5">
-            <span class="text-xs font-bold ${pnl>0?'text-emerald-400':(pnl<0?'text-red-400':'muted')}">
+            <span class="text-xs font-bold ${pnl>0?'text-emerald-700':(pnl<0?'text-red-700':'text-gray-500')}">
               USD ${Number(pnl).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0})}
             </span>
-            <span class="text-[11px] muted">
+            <span class="text-[11px] ${trades===0?'text-gray-400':'text-gray-600'}">
               ${trades} ${trades===1?'trade':'trades'}
             </span>
           </div>
@@ -494,66 +492,141 @@
       renderStrategyEdge(results);
     }
 
-    function renderStrategyEdge(list){
-      const host = document.getElementById('strategyEdgeContainer');
-      if(!host) return;
+    // function renderStrategyEdge(list){
+    //   const host = document.getElementById('strategyEdgeContainer');
+    //   if(!host) return;
 
-      if(!list.length){
-        host.innerHTML = `<p class="text-sm muted">No strategy data yet. Add strategies in Settings and log trades.</p>`;
-        return;
-      }
+    //   if(!list.length){
+    //     host.innerHTML = `<p class="text-sm muted">No strategy data yet. Add strategies in Settings and log trades.</p>`;
+    //     return;
+    //   }
 
-      let html = `
-        <div class="overflow-x-auto -mx-2 sm:mx-0">
-          <table class="min-w-full text-sm">
-            <thead class="text-left muted">
-              <tr>
-                <th class="py-2 pr-4">Strategy</th>
-                <th class="py-2 pr-4">E (R) <span class="qmark" title="Expectancy per trade in R. (W% × Avg Rwin) − (L% × Avg Rloss)">?</span></th>
-                <th class="py-2 pr-4">PF <span class="qmark" title="Profit Factor = Gross Profit / Gross Loss. >1 profitable.">?</span></th>
-                <th class="py-2 pr-4">Avg R <span class="qmark" title="Average R per trade. Compares strategies with different sizing.">?</span></th>
-                <th class="py-2 pr-4">Win % <span class="qmark" title="Percentage of winning trades. Interpret with Avg R / PF.">?</span></th>
-                <th class="py-2 pr-4">Net P/L <span class="qmark" title="Total profit minus loss for this strategy.">?</span></th>
-                <th class="py-2 pr-4">MDD <span class="qmark" title="Max Drawdown for this strategy’s equity.">?</span></th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-800">
-      `;
-      for(const s of list){
-        html += `
-          <tr>
-            <td class="py-2 pr-4 font-medium">${s.name}</td>
-            <td class="py-2 pr-4 ${s.expectancy>=0?'text-emerald-400':'text-red-400'}">${f2(s.expectancy)}</td>
-            <td class="py-2 pr-4">${f2(s.profit_factor)}</td>
-            <td class="py-2 pr-4">${f2(s.avg_r)}</td>
-            <td class="py-2 pr-4">${f2(s.win_rate)}%</td>
-            <td class="py-2 pr-4 ${s.net_pl>=0?'text-emerald-400':'text-red-400'}">${s.net_pl>=0?'+':''}${fmtUSD(s.net_pl)}</td>
-            <td class="py-2 pr-4">${f2(s.max_drawdown)}</td>
-          </tr>
-        `;
-        if(s.top_assets && s.top_assets.length){
-          html += `
-            <tr class="text-xs">
-              <td class="py-1 pr-4 muted" colspan="7">
-                <span class="font-medium">Top Assets:</span>
-                ${s.top_assets.map(a=>{
-                  const sign = a.net_pl>=0?'+':'';
-                  return `<span class="token mr-2 mt-1">
-                    <span class="font-mono">${a.symbol}</span>
-                    <span class="${a.net_pl>=0?'text-emerald-400':'text-red-400'}">${sign}${Number(a.net_pl).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0})}</span>
-                    <span class="muted">/ ${i0(a.win_rate)}%</span>
-                  </span>`;
-                }).join('')}
-              </td>
-            </tr>
-          `;
-        }
-      }
-      html += `</tbody></table></div>`;
-      host.innerHTML = html;
-    }
+    //   let html = `
+    //     <div class="overflow-x-auto -mx-2 sm:mx-0">
+    //       <table class="min-w-full text-sm">
+    //         <thead class="text-left muted">
+    //           <tr>
+    //             <th class="py-2 pr-4">Strategy</th>
+    //             <th class="py-2 pr-4">E (R) <span class="qmark" title="Expectancy per trade in R. (W% × Avg Rwin) − (L% × Avg Rloss)">?</span></th>
+    //             <th class="py-2 pr-4">PF <span class="qmark" title="Profit Factor = Gross Profit / Gross Loss. >1 profitable.">?</span></th>
+    //             <th class="py-2 pr-4">Avg R <span class="qmark" title="Average R per trade. Compares strategies with different sizing.">?</span></th>
+    //             <th class="py-2 pr-4">Win % <span class="qmark" title="Percentage of winning trades. Interpret with Avg R / PF.">?</span></th>
+    //             <th class="py-2 pr-4">Net P/L <span class="qmark" title="Total profit minus loss for this strategy.">?</span></th>
+    //             <th class="py-2 pr-4">MDD <span class="qmark" title="Max Drawdown for this strategy’s equity.">?</span></th>
+    //           </tr>
+    //         </thead>
+    //         <tbody class="divide-y divide-gray-800">
+    //   `;
+    //   for(const s of list){
+    //     html += `
+    //       <tr>
+    //         <td class="py-2 pr-4 font-medium">${s.name}</td>
+    //         <td class="py-2 pr-4 ${s.expectancy>=0?'text-emerald-400':'text-red-400'}">${f2(s.expectancy)}</td>
+    //         <td class="py-2 pr-4">${f2(s.profit_factor)}</td>
+    //         <td class="py-2 pr-4">${f2(s.avg_r)}</td>
+    //         <td class="py-2 pr-4">${f2(s.win_rate)}%</td>
+    //         <td class="py-2 pr-4 ${s.net_pl>=0?'text-emerald-400':'text-red-400'}">${s.net_pl>=0?'+':''}${fmtUSD(s.net_pl)}</td>
+    //         <td class="py-2 pr-4">${f2(s.max_drawdown)}</td>
+    //       </tr>
+    //     `;
+    //     if(s.top_assets && s.top_assets.length){
+    //       html += `
+    //         <tr class="text-xs">
+    //           <td class="py-1 pr-4 muted" colspan="7">
+    //             <span class="font-medium">Top Assets:</span>
+    //             ${s.top_assets.map(a=>{
+    //               const sign = a.net_pl>=0?'+':'';
+    //               return `<span class="token mr-2 mt-1">
+    //                 <span class="font-mono">${a.symbol}</span>
+    //                 <span class="${a.net_pl>=0?'text-emerald-400':'text-red-400'}">${sign}${Number(a.net_pl).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0})}</span>
+    //                 <span class="muted">/ ${i0(a.win_rate)}%</span>
+    //               </span>`;
+    //             }).join('')}
+    //           </td>
+    //         </tr>
+    //       `;
+    //     }
+    //   }
+    //   html += `</tbody></table></div>`;
+    //   host.innerHTML = html;
+    // }
+
+
 
     // ---------- Quick Trade Entry (AJAX) ----------
+    
+    function renderStrategyEdge(list) {
+  const host = document.getElementById('strategyEdgeContainer');
+  if (!host) return;
+
+  if (!list.length) {
+    host.innerHTML = `<p class="text-sm muted">No strategy data yet. Add strategies in Settings and log trades.</p>`;
+    return;
+  }
+
+  let html = `
+    <div class="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
+      <table class="min-w-full text-sm text-gray-700">
+        <thead class="bg-gray-50 border-b border-gray-200 text-gray-600 text-xs uppercase tracking-wider">
+          <tr>
+            <th class="py-3 px-4 text-left font-semibold">Strategy</th>
+            <th class="py-3 px-4 text-right font-semibold">Expectancy (R)</th>
+            <th class="py-3 px-4 text-right font-semibold">Profit Factor</th>
+            <th class="py-3 px-4 text-right font-semibold">Avg R</th>
+            <th class="py-3 px-4 text-right font-semibold">Win %</th>
+            <th class="py-3 px-4 text-right font-semibold">Net P/L</th>
+            <th class="py-3 px-4 text-right font-semibold">MDD</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100 bg-white">
+  `;
+
+  for (const s of list) {
+    const plColor = s.net_pl >= 0 ? 'text-emerald-600' : 'text-red-600';
+    const exColor = s.expectancy >= 0 ? 'text-emerald-600' : 'text-red-600';
+    const pfColor = s.profit_factor >= 1 ? 'text-emerald-600' : 'text-red-600';
+    const wrColor = s.win_rate >= 50 ? 'text-emerald-600' : 'text-red-600';
+
+    html += `
+      <tr class="hover:bg-gray-50 transition">
+        <td class="py-3 px-4 font-medium text-gray-800">${s.name}</td>
+        <td class="py-3 px-4 text-right font-semibold ${exColor}">${f2(s.expectancy)}</td>
+        <td class="py-3 px-4 text-right font-semibold ${pfColor}">${f2(s.profit_factor)}</td>
+        <td class="py-3 px-4 text-right font-semibold text-gray-700">${f2(s.avg_r)}</td>
+        <td class="py-3 px-4 text-right font-semibold ${wrColor}">${f2(s.win_rate)}%</td>
+        <td class="py-3 px-4 text-right font-semibold ${plColor}">${s.net_pl >= 0 ? '+' : ''}${fmtUSD(s.net_pl)}</td>
+        <td class="py-3 px-4 text-right font-semibold text-gray-700">${f2(s.max_drawdown)}</td>
+      </tr>
+    `;
+
+    // Top assets row (optional detail)
+    if (s.top_assets && s.top_assets.length) {
+      html += `
+        <tr class="bg-gray-50">
+          <td colspan="7" class="py-2 px-4 text-xs text-gray-600">
+            <div class="flex flex-wrap gap-2 items-center">
+              <span class="font-medium text-gray-700">Top Assets:</span>
+              ${s.top_assets.map(a => {
+                const sign = a.net_pl >= 0 ? '+' : '';
+                const color = a.net_pl >= 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700';
+                return `
+                  <span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg ${color}">
+                    <span class="font-mono text-[12px]">${a.symbol}</span>
+                    <span class="font-semibold">${sign}${Number(a.net_pl).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0})}</span>
+                    <span class="text-gray-500 text-[11px]">(${i0(a.win_rate)}%)</span>
+                  </span>`;
+              }).join('')}
+            </div>
+          </td>
+        </tr>
+      `;
+    }
+  }
+
+  html += `</tbody></table></div>`;
+  host.innerHTML = html;
+}
+
     function getCSRFToken(){
       const input = document.querySelector('#tradeEntryForm input[name="csrfmiddlewaretoken"]');
       if (input) return input.value;
@@ -620,5 +693,9 @@
       computeStrategyEdges();
     });
   </script>
+</body>
+</html>
+
+
 </body>
 </html>

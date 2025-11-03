@@ -1,44 +1,49 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full dark">
+<html lang="en" class="h-full">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Sign In | Trading Journal</title>
 
-  <!-- Dark mode only -->
-  <script>
-    document.documentElement.classList.add('dark');
-    document.documentElement.style.colorScheme = 'dark';
-  </script>
-
   <!-- Tailwind + Inter -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet" />
   <style>
-    :root{ --panel:rgba(17,24,39,.65); --border:rgba(255,255,255,.08); }
-    body{ font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,'Noto Sans',Arial; }
-    .glass{ background:var(--panel); border:1px solid var(--border); backdrop-filter: blur(8px); }
-    .muted{ color: rgb(156 163 175); }
+    :root { 
+      --panel: rgba(255,255,255,0.8); 
+      --border: rgba(0,0,0,0.1); 
+    }
+    body { 
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, 'Noto Sans', Arial; 
+    }
+    .glass { 
+      background: var(--panel); 
+      border: 1px solid var(--border); 
+      backdrop-filter: blur(8px); 
+    }
+    .muted { 
+      color: rgb(107 114 128); 
+    }
   </style>
 </head>
-<body class="min-h-screen bg-[#0b1220] text-gray-100 relative overflow-hidden">
+<body class="min-h-screen bg-gray-50 text-gray-900 relative overflow-hidden">
   <!-- Decorative background -->
   <svg class="pointer-events-none absolute -left-24 -top-24 w-[640px] opacity-[0.07]" viewBox="0 0 200 200" fill="none">
-    <path d="M10 160 L40 140 L70 150 L100 110 L130 130 L160 80" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-    <rect x="40" y="60" width="12" height="28" rx="2" fill="white" opacity=".8"/>
-    <rect x="85" y="75" width="12" height="32" rx="2" fill="white" opacity=".6"/>
-    <rect x="130" y="45" width="12" height="46" rx="2" fill="white" opacity=".45"/>
+    <path d="M10 160 L40 140 L70 150 L100 110 L130 130 L160 80" stroke="black" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="40" y="60" width="12" height="28" rx="2" fill="black" opacity=".1"/>
+    <rect x="85" y="75" width="12" height="32" rx="2" fill="black" opacity=".08"/>
+    <rect x="130" y="45" width="12" height="46" rx="2" fill="black" opacity=".05"/>
   </svg>
   <svg class="pointer-events-none absolute -right-24 -bottom-24 w-[560px] opacity-[0.07]" viewBox="0 0 200 200" fill="none">
-    <circle cx="100" cy="100" r="64" stroke="white" stroke-width="6"/>
-    <path d="M36 100h128M100 36v128" stroke="white" stroke-width="6" opacity=".7"/>
+    <circle cx="100" cy="100" r="64" stroke="black" stroke-width="6"/>
+    <path d="M36 100h128M100 36v128" stroke="black" stroke-width="6" opacity=".7"/>
   </svg>
 
   <main class="min-h-screen grid place-items-center p-4">
     <div class="w-full max-w-md glass rounded-2xl p-7 shadow-2xl">
       <div class="flex items-center gap-3 mb-4">
-        <div class="h-10 w-10 rounded-xl bg-blue-500/20 flex items-center justify-center border border-blue-400/30">
-          <svg class="h-5 w-5 text-blue-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <div class="h-10 w-10 rounded-xl bg-blue-100 flex items-center justify-center border border-blue-300">
+          <svg class="h-5 w-5 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
           </svg>
         </div>
@@ -49,7 +54,7 @@
       </div>
 
       {% if form.non_field_errors %}
-        <div class="mb-4 rounded-lg border border-red-400/30 bg-red-500/10 p-3 text-sm">
+        <div class="mb-4 rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-700">
           {% for err in form.non_field_errors %}<div>{{ err }}</div>{% endfor %}
         </div>
       {% endif %}
@@ -60,12 +65,12 @@
           <label class="text-xs muted">Username</label>
           <div class="mt-1 relative">
             <input name="username" autocomplete="username" required
-                   class="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                    placeholder="your.username" />
             <svg class="absolute right-3 top-2.5 h-4 w-4 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
           </div>
           {% if form.username.errors %}
-            <p class="text-xs text-red-400 mt-1">{{ form.username.errors.0 }}</p>
+            <p class="text-xs text-red-500 mt-1">{{ form.username.errors.0 }}</p>
           {% endif %}
         </div>
 
@@ -73,15 +78,15 @@
           <label class="text-xs muted">Password</label>
           <div class="mt-1 relative">
             <input id="password" name="password" type="password" autocomplete="current-password" required
-                   class="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
                    placeholder="••••••••" />
-            <button type="button" id="togglePw" class="absolute right-2 top-1.5 p-1 rounded-md hover:bg-white/5" aria-label="Show password">
+            <button type="button" id="togglePw" class="absolute right-2 top-1.5 p-1 rounded-md hover:bg-gray-100" aria-label="Show password">
               <svg id="eye" class="h-5 w-5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8Z"/><circle cx="12" cy="12" r="3"/></svg>
               <svg id="eyeOff" class="h-5 w-5 text-gray-400 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 3 18 18"/><path d="M10.58 10.58A2 2 0 0 0 12 14a2 2 0 0 0 1.42-.58"/><path d="M16.24 7.76A10.94 10.94 0 0 1 23 12s-4 8-11 8a10.94 10.94 0 0 1-7.76-3.24"/></svg>
             </button>
           </div>
           {% if form.password.errors %}
-            <p class="text-xs text-red-400 mt-1">{{ form.password.errors.0 }}</p>
+            <p class="text-xs text-red-500 mt-1">{{ form.password.errors.0 }}</p>
           {% endif %}
         </div>
 
