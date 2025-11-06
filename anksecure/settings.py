@@ -7,15 +7,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() == "true"
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
-# --- CSRF & Cookie Settings ---
+# # --- CSRF & Cookie Settings ---
+# CSRF_TRUSTED_ORIGINS = [
+#     "https://madpips.up.railway.app",
+#     "madpips.up.railway.app",           # add bare hostname
+#     "http://127.0.0.1:8000",
+#     "127.0.0.1:8000",
+#     "http://localhost:8000",
+#     "localhost:8000",
+# ]
 CSRF_TRUSTED_ORIGINS = [
     "https://madpips.up.railway.app",
-    "madpips.up.railway.app",           # add bare hostname
     "http://127.0.0.1:8000",
-    "127.0.0.1:8000",
     "http://localhost:8000",
-    "localhost:8000",
 ]
+
 # --- APPLICATIONS ---
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -66,11 +72,35 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "anksecure.wsgi.application"
 
+# # --- DATABASE ---
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
+
+# # --- DATABASE ---
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'railway',
+#         'USER': 'postgres',
+#         'PASSWORD': 'DHDEsOOuLOBpKvfOzCnoxmasparTJTgQ',
+#         'HOST': 'maglev.proxy.rlwy.net',
+#         'PORT': '19225',
+#     }
+# }
+
 # --- DATABASE ---
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'railway',  # same as POSTGRES_DB
+        'USER': 'postgres',  # same as POSTGRES_USER
+        'PASSWORD': 'DHDEsOOuLOBpKvfOzCnoxmasparTJTgQ',  # same as POSTGRES_PASSWORD
+        'HOST': 'postgres-bcqf.railway.internal',  # internal hostname for Railway network
+        'PORT': '5432',  # internal port
     }
 }
 
@@ -107,25 +137,10 @@ AXES_RESET_ON_SUCCESS = True
 # --- IDLE TIMEOUT ---
 SECURITY_IDLE_TIMEOUT_SECONDS = 1800
 
-# # --- SECURITY HEADERS ---
-# SECURE_BROWSER_XSS_FILTER = True
-# SECURE_CONTENT_TYPE_NOSNIFF = True
-# SECURE_SSL_REDIRECT = not DEBUG
-# SESSION_COOKIE_SECURE = not DEBUG
-# CSRF_COOKIE_SECURE = not DEBUG
-# X_FRAME_OPTIONS = "DENY"
-# SECURE_HSTS_SECONDS = 31536000
-# # --- Railway HTTPS Fix (prevent redirect loops) ---
-# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-# SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-# SECURE_HSTS_PRELOAD = True
 # --- SECURITY HEADERS ---
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_SSL_REDIRECT = False
-# SESSION_COOKIE_SECURE = not DEBUG
-# CSRF_COOKIE_SECURE = not DEBUG
 X_FRAME_OPTIONS = "DENY"
 SECURE_HSTS_SECONDS = 31536000
 # --- Railway HTTPS Fix (prevent redirect loops) ---
